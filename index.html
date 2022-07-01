@@ -1,219 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigator</title>
-    <style>
-        ::root {
-            box-sizing: border-box;
-        }
-        *, ::before, ::after {
-            box-sizing: inherit;
-            margin: 0;
-        }
-        body {
-            height: 100vh;
-            width: 100vw;
-
-            position: relative;
-        }
-
-        #container {
-            width: 85vw;
-            position: fixed;
-            left: 50%;
-            top: 30vh;
-            transform: translate(-50%, 0);
-        }
-
-        #container div {
-            width: 100%;
-        }
-        .logo a {
-            display: block;
-            height: 10vh;
-            text-align: center;
-        }
-        .logo a img {
-            height: 100%;
-        }
-
-        .box {
-            position: relative;
-            font-size: 1.5rem;
-            height: 2em;
-        }
-        .box .boxc {
-            width: 90%;
-            height: 80%;
-
-            margin: 0 auto;
-            border: 1px solid #ccc;
-            border-radius: 1em;
-        }
-
-        #text {
-            /* 边框1px */
-            height: calc(100% - 2px);
-            width: calc(100% - 3em);
-
-            display: block;
-            margin: 0 auto;
-
-            border: none;
-            outline: none;
-        }
-        .keywords {
-            position: absolute;
-            left: 10%;
-            right: 10%;
-
-            padding: 0;
-            list-style: none;
-
-            font-size: .6rem;
-        }
-
-        .keywords li {
-            text-indent: .5em;
-            line-height: 2.5em;
-            border-left: 1px solid #ccc;
-            border-right: 1px solid #ccc;
-
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            background-color: #fff;
-        }
-        .keywords li:last-child {
-            border-bottom: 1px solid #ccc;
-        } 
-
-        .bms > a {
-            text-decoration: none;
-            
-            display: block;
-            float: left;
-
-            margin: 1em;
-
-            width: 2em;
-            height: 2em;
-        }
-        .bms > a img {
-            width: 100%;
-        }
-    </style>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="icon.jpg">
+    <link rel="stylesheet" href="nomal.css">
+    <title>tinyNav</title>
 </head>
-<body>
-    <div id="container">
-        <div class="logo">
-            <a href="folder://">
-                <img src="https://z3.ax1x.com/2021/05/16/gcyX6K.png" alt="google logo" />
-            </a>
-        </div>
-        <div class="box">
-            <form action="http://www.baidu.com/s" class="boxc">
-                <input type="text" id="text" name="wd" autocomplete="off"> 
-            </form>
-            <ul class="keywords">
-            </ul>
-        </div>
-        <div class="bm">
-            <div class="bms">
-                <a href="#" class="addbk">
-                    <img src="https://z3.ax1x.com/2021/05/16/gcfjC4.png" alt="gcfjC4.png" />
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <script data-index="0">
-        var oText = document.getElementById("text");
-        var oKeyword = document.getElementsByClassName("keywords")[0];
-        oText.addEventListener('keyup', loadjsonp);
-
-        function loadjsonp() {
-            var val = this.value;
-            if (val === '') {
-                oKeyword.style.display = "none";
-                return;
-            }
-            oKeyword.style.display = "block";
-
-            //删除其他多余script标签的函数
-            var already_Script = document.getElementsByTagName("script");
-            for (let i = 0, len = already_Script.length; i < len; i++) {
-                var script_index = already_Script[i].getAttribute("data-index");
-                if (script_index != 0) {
-                    document.body.removeChild(already_Script[i]);
-                }
-            }
-
-            var oScript = document.createElement("script");
-            oScript.setAttribute("data-index", "1");
-            oScript.src = "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=" + val + "&cb=lzw";
-            document.body.appendChild(oScript);
-        }
-        function lzw(data) {
-            var key = data.s;
-            document.querySelector("ul").innerText = " ";
-            if (key.length) {
-                key.forEach(function(content) {
-                    var oLi = document.createElement("li");
-                    oLi.innerText = content;
-                    oLi.onclick = function() {
-                        window.location.href = "http://www.baidu.com/s?wd=" + content;
-                    }
-                    document.querySelector("ul").appendChild(oLi);
-                });
-            } else {
-                document.querySelector(".keywords").style.display = "none";
-            }
-        }
-
-        const addbk = document.querySelector('.addbk');
-        const ctnr = document.querySelector('.bms');
-        addbk.addEventListener('click', e => {
-            e.preventDefault();
-            let str = window.prompt("图片链接"); 
-            if (str != null ) {
-                let atag = document.createElement('a');
-                let aimg = document.createElement('img');
-                aimg.src = str;
-                aimg.alt = '自定义书签';
-                aimg.onload = function () {
-                    atag.appendChild(aimg);
-                    atag.href = window.prompt('指向的URL', 'https://');
-                    ctnr.insertBefore(atag, addbk);
-                    
-                    localStorage.setItem(str, atag.href);
-                }
-            }
-        })
-
-
-        window.onload = function () {
-            let frag = document.createDocumentFragment();
-            for (var i = 0; i < localStorage.length; i++) {
-                let aTag = document.createElement('a');
-                let aImg = document.createElement('img');
-                
-                let name = localStorage.key(i);
-                let url = localStorage.getItem(name);
-
-                aImg.src = name;
-                aImg.alt = '自定义书签';
-                aImg.onload = function () {
-                    aTag.appendChild(aImg);
-                    aTag.href = url;
-                }
-                
-                frag.appendChild(aTag);
-            }
-            addbk.parentNode.insertBefore(frag, addbk);
-        }
-    </script>
+<body class="tar1">
+    <section class="main">
+        <form action="http://www.baidu.com/s">
+            <input type="text" id="text" name="wd" autocomplete="off"> 
+        </form>
+        <ul class="keywords">
+        </ul>
+    </section>
+    <footer class="something">
+        <a href="https://weread.qq.com/" class="bk">WeRead</a>
+        <a href="https://weibo.com/" class="bk">Weibo</a>
+        <a href="https://www.bilibili.com/" class="bk">Bilibili</a>
+        <a href="https://www.zhihu.com/" class="bk">Zhihu</a>
+        <span class="add" contenteditable="true">add</span>
+    </footer>
+    <ul class="cont">
+        <li>DEMO1</li>
+        <li>DEMO1</li>
+    </ul>
 </body>
+<script src="js.js" data-index="0"></script>
 </html>
